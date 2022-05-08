@@ -1,0 +1,20 @@
+// Colors
+$clrWhite: hsl(0, 0%, 100%);
+$mainPropdoColor: hsl(225, 100%, 14%);
+$clrBlack: hsl(0, 0%, 12%);
+
+//Default background color
+$bgrclr1: $clrBlack;
+
+//Buttons
+
+$primary: hsl(207, 100%, 50%);
+$primaryHover: hsl(224, 100%, 50%);
+
+$danger: hsl(0, 100%, 67%);
+$dangerHover: hsl(0, 100%, 61%);
+
+// Breakpoints
+$mobile-breakpoint: 475px;
+$narrow-breakpoint: 720px;
+$normal-breakpoint: 960px;

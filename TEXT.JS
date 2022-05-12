@@ -34,3 +34,11 @@
 //       document.execCommand(`${command}`, false, `${cmdValue}` || '');
 //   }
 // };
+
+// if (
+//   (targetElement.length > 0 &&
+//     range.startContainer.nextSibling !== null &&
+//     range.startContainer.nextSibling.tagName.toLowerCase() === tag) ||
+//   (targetElement.length > 0 &&
+//     range.startContainer.parentNode !== null &&
+//     range.startContainer.parentNode.tagName.toLowerCase() === tag)

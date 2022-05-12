@@ -26,21 +26,22 @@ export const Underline = () => {
     document.execCommand('defaultParagraphSeparator', false, 'p')
   );
 
-  const changeElement = () => {
+  const setElementTag = (tag) => {
     let selectedText = window.getSelection();
     if (!selectedText.toString()) return;
 
     let range = selectedText.getRangeAt(0);
-    const targetElement = document.getElementsByTagName('strong');
-    const regex = new RegExp('strong');
+    const targetElement = document.getElementsByTagName(tag);
+    const regex = new RegExp(tag);
     let textNode = document.createTextNode(selectedText.toString());
+
     if (
       (targetElement.length > 0 &&
         range.startContainer.nextSibling !== null &&
-        range.startContainer.nextSibling.tagName.toLowerCase() === 'strong') ||
+        range.startContainer.nextSibling.tagName.toLowerCase() === tag) ||
       (targetElement.length > 0 &&
         range.startContainer.parentNode !== null &&
-        range.startContainer.parentNode.tagName.toLowerCase() === 'strong')
+        range.startContainer.parentNode.tagName.toLowerCase() === tag)
     ) {
       if (regex.test(targetElement.item(0).tagName.toLowerCase())) {
         // console.log('regex test worked');
@@ -48,13 +49,13 @@ export const Underline = () => {
         for (let i = 0; i < targetElement.length; i++) {
           if (
             selectedText.containsNode(
-              document.querySelectorAll('strong').item(i),
+              document.querySelectorAll(tag).item(i),
               true
             )
           ) {
             console.log('found tag position:', i);
 
-            document.getElementsByTagName('strong')[i].replaceWith(textNode);
+            document.getElementsByTagName(tag)[i].replaceWith(textNode);
           }
         }
 
@@ -72,7 +73,7 @@ export const Underline = () => {
     } else {
       console.log('newly created');
       const content = range.extractContents();
-      const element = document.createElement('strong');
+      const element = document.createElement(tag);
 
       element.appendChild(content);
       range.insertNode(element);
@@ -96,52 +97,52 @@ export const Underline = () => {
   // };
 
   // #Keeping this for future reference
-  const onCommandFire = (command) => {
-    switch (command) {
-      case 'createLink':
-        let selection = document.getSelection();
-        document.execCommand(`${command}`, false, `${cmdValue}` || '');
-        selection.anchorNode.parentElement.target = '_blank';
-        break;
-      case 'insertHtml':
-        document.execCommand(
-          `${command}`,
-          false,
-          `` ||
-            '<iframe src="https://oembed.link/https://youtu.be/EyFJKKLUudc" frameborder="0"  allowfullscreen></iframe>'
-        );
-        break;
-      default:
-        document.execCommand(`${command}`, false, `${cmdValue}` || '');
-    }
-  };
-
-  const setColor = (e) => {
-    setCmdValue(e.target.value);
-    onCommandFire('hiliteColor');
-  };
+  // const onCommandFire = (command) => {
+  //   switch (command) {
+  //     case 'createLink':
+  //       let selection = document.getSelection();
+  //       document.execCommand(`${command}`, false, `${cmdValue}` || '');
+  //       selection.anchorNode.parentElement.target = '_blank';
+  //       break;
+  //     case 'insertHtml':
+  //       document.execCommand(
+  //         `${command}`,
+  //         false,
+  //         `` ||
+  //           '<iframe src="https://oembed.link/https://youtu.be/EyFJKKLUudc" frameborder="0"  allowfullscreen></iframe>'
+  //       );
+  //       break;
+  //     default:
+  //       document.execCommand(`${command}`, false, `${cmdValue}` || '');
+  //   }
+  // };
 
   return (
     <div className='editor'>
       <section>
         <div className='editor-controllers'>
           <FontAwesomeIcon icon={faHeading} className='icon-controller' />
-          <button className='icon-controller' onClick={() => changeElement()}>
+          <button
+            className='icon-controller'
+            onClick={() => setElementTag('strong')}>
             <FontAwesomeIcon icon={faBold} className='icon-controller' />
           </button>
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('italic')}>
+            // onClick={() => onCommandFire('italic')}
+          >
             <FontAwesomeIcon icon={faItalic} />
           </button>
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('underline')}>
+            // onClick={() => onCommandFire('underline')}
+          >
             <FontAwesomeIcon icon={faUnderline} className='icon-controller' />
           </button>
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('strikeThrough')}>
+            // onClick={() => onCommandFire('strikeThrough')}
+          >
             <FontAwesomeIcon icon={faStrikethrough} />
           </button>
 
@@ -149,47 +150,54 @@ export const Underline = () => {
           <FontAwesomeIcon icon={faPaintbrush} className='icon-controller' />
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('hiliteColor')}>
+            // onClick={() => onCommandFire('hiliteColor')}
+          >
             <FontAwesomeIcon icon={faHighlighter} />
           </button>
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('insertUnorderedList')}>
+            // onClick={() => onCommandFire('insertUnorderedList')}
+          >
             <FontAwesomeIcon icon={faList} />
           </button>
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('insertOrderedList')}>
+            // onClick={() => onCommandFire('insertOrderedList')}
+          >
             <FontAwesomeIcon icon={faListOl} />
           </button>
           <FontAwesomeIcon icon={faAlignLeft} className='icon-controller' />
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('indent')}>
+            // onClick={() => onCommandFire('indent')}
+          >
             <FontAwesomeIcon icon={faIndent} />
           </button>
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('outdent')}>
+            // onClick={() => onCommandFire('outdent')}
+          >
             <FontAwesomeIcon icon={faOutdent} />
           </button>
           <FontAwesomeIcon icon={faParagraph} className='icon-controller' />
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('createLink')}>
+            // onClick={() => onCommandFire('createLink')}
+          >
             <FontAwesomeIcon icon={faLink} />
           </button>
           <FontAwesomeIcon icon={faImage} className='icon-controller' />
           <button
             className='icon-controller'
-            onClick={() => onCommandFire('insertHtml')}>
+            // onClick={() => onCommandFire('insertHtml')}
+          >
             <FontAwesomeIcon icon={faFilm} />
           </button>
           <input
             type='color'
-            onChange={(e) => {
-              setColor(e);
-            }}
+            // onChange={(e) => {
+            //   setColor(e);
+            // }}
           />
         </div>
       </section>

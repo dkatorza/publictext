@@ -21,19 +21,37 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 export const Underline = () => {
-  const [cmdValue, setCmdValue] = useState('');
   const editableDiv = useRef(
     document.execCommand('defaultParagraphSeparator', false, 'p')
   );
 
+  const getTextSelection = () => {
+    const selection = window.getSelection();
+    return selection;
+  };
+
+  const setRangeSelection = (selectedText, range, textNode) => {
+    selectedText.removeRange(range);
+    range = document.createRange();
+    range.setStart(textNode, 0);
+    range.setEnd(textNode, textNode.length);
+    return selectedText.addRange(range);
+  };
+
+  const createNewElement = (range, tag) => {
+    const content = range.extractContents();
+    const element = document.createElement(tag);
+    element.appendChild(content);
+    range.insertNode(element);
+  };
+
   const setElementTag = (tag) => {
-    let selectedText = window.getSelection();
+    const selectedText = getTextSelection();
     if (!selectedText.toString()) return;
 
     let range = selectedText.getRangeAt(0);
+    const textNode = document.createTextNode(selectedText.toString());
     const targetElement = document.getElementsByTagName(tag);
-    const regex = new RegExp(tag);
-    let textNode = document.createTextNode(selectedText.toString());
 
     if (
       (targetElement.length > 0 &&
@@ -43,79 +61,22 @@ export const Underline = () => {
         range.startContainer.parentNode !== null &&
         range.startContainer.parentNode.tagName.toLowerCase() === tag)
     ) {
-      if (regex.test(targetElement.item(0).tagName.toLowerCase())) {
-        // console.log('regex test worked');
-
-        for (let i = 0; i < targetElement.length; i++) {
-          if (
-            selectedText.containsNode(
-              document.querySelectorAll(tag).item(i),
-              true
-            )
-          ) {
-            console.log('found tag position:', i);
-
-            document.getElementsByTagName(tag)[i].replaceWith(textNode);
-          }
+      for (let i = 0; i < targetElement.length; i++) {
+        if (
+          selectedText.containsNode(
+            document.getElementsByTagName(tag).item(i),
+            true
+          )
+        ) {
+          document.getElementsByTagName(tag)[i].replaceWith(textNode);
         }
-
-        selectedText.removeAllRanges();
-        range = document.createRange();
-
-        range.setStart(textNode, 0);
-        range.setEnd(textNode, textNode.length);
-        selectedText.addRange(range);
-
-        return;
-      } else {
-        console.log('test not working');
       }
+      setRangeSelection(selectedText, range, textNode);
+      return;
     } else {
-      console.log('newly created');
-      const content = range.extractContents();
-      const element = document.createElement(tag);
-
-      element.appendChild(content);
-      range.insertNode(element);
+      createNewElement(range, tag);
     }
   };
-
-  // #Keeping this for future reference
-  // const onCommandFire = (command) => {
-  //   if (command === 'createLink') {
-  //     let selection = document.getSelection();
-  //     document.execCommand(`${command}`, false, `${cmdValue}` || '');
-  //     selection.anchorNode.parentElement.target = '_blank';
-  //   }
-  //   // if (!window.getSelection().toString()) return;
-  //   // const selectedTextArea = window.getSelection();
-  //   // const selectedRange = selectedTextArea.getRangeAt(0);
-  //   // setHighlightText(
-  //   //   selectedTextArea.toString().substring(0, selectedRange.endOffset)
-  //   // );
-  //   // document.execCommand(`${command}`, false, `${cmdValue}` || '');
-  // };
-
-  // #Keeping this for future reference
-  // const onCommandFire = (command) => {
-  //   switch (command) {
-  //     case 'createLink':
-  //       let selection = document.getSelection();
-  //       document.execCommand(`${command}`, false, `${cmdValue}` || '');
-  //       selection.anchorNode.parentElement.target = '_blank';
-  //       break;
-  //     case 'insertHtml':
-  //       document.execCommand(
-  //         `${command}`,
-  //         false,
-  //         `` ||
-  //           '<iframe src="https://oembed.link/https://youtu.be/EyFJKKLUudc" frameborder="0"  allowfullscreen></iframe>'
-  //       );
-  //       break;
-  //     default:
-  //       document.execCommand(`${command}`, false, `${cmdValue}` || '');
-  //   }
-  // };
 
   return (
     <div className='editor'>

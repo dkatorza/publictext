@@ -22,15 +22,9 @@ import {
 
 export const Underline = () => {
   const [cmdValue, setCmdValue] = useState('');
-  // const [selectedText, setSelectedText] = useState(null);
   const editableDiv = useRef(
     document.execCommand('defaultParagraphSeparator', false, 'p')
   );
-
-  // useEffect(() => {
-  //   let currSelection = window.getSelection();
-  //   setSelectedText(currSelection);
-  // }, [selectedText]);
 
   const changeElement = () => {
     let selectedText = window.getSelection();

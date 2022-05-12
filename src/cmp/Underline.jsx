@@ -22,30 +22,70 @@ import {
 
 export const Underline = () => {
   const [cmdValue, setCmdValue] = useState('');
-  const [selectedText, setSelectedText] = useState(null);
+  // const [selectedText, setSelectedText] = useState(null);
   const editableDiv = useRef(
     document.execCommand('defaultParagraphSeparator', false, 'p')
   );
 
-  useEffect(() => {
-    let currSelection = window.getSelection();
-    setSelectedText(currSelection);
-  }, [selectedText]);
+  // useEffect(() => {
+  //   let currSelection = window.getSelection();
+  //   setSelectedText(currSelection);
+  // }, [selectedText]);
 
   const changeElement = () => {
+    let selectedText = window.getSelection();
     if (!selectedText.toString()) return;
+
     let range = selectedText.getRangeAt(0);
+    const targetElement = document.getElementsByTagName('strong');
+    const regex = new RegExp('strong');
+    let textNode = document.createTextNode(selectedText.toString());
+    if (
+      (targetElement.length > 0 &&
+        range.startContainer.nextSibling !== null &&
+        range.startContainer.nextSibling.tagName.toLowerCase() === 'strong') ||
+      (targetElement.length > 0 &&
+        range.startContainer.parentNode !== null &&
+        range.startContainer.parentNode.tagName.toLowerCase() === 'strong')
+    ) {
+      if (regex.test(targetElement.item(0).tagName.toLowerCase())) {
+        // console.log('regex test worked');
 
-    console.log(selectedText.focusNode.innerHTML);
+        for (let i = 0; i < targetElement.length; i++) {
+          if (
+            selectedText.containsNode(
+              document.querySelectorAll('strong').item(i),
+              true
+            )
+          ) {
+            console.log('found tag position:', i);
 
-    console.log(selectedText.type);
-    let content = range.extractContents();
-    let element = document.createElement('strong');
+            document.getElementsByTagName('strong')[i].replaceWith(textNode);
+          }
+        }
 
-    element.appendChild(content);
-    range.insertNode(element);
+        selectedText.removeAllRanges();
+        range = document.createRange();
+
+        range.setStart(textNode, 0);
+        range.setEnd(textNode, textNode.length);
+        selectedText.addRange(range);
+
+        return;
+      } else {
+        console.log('test not working');
+      }
+    } else {
+      console.log('newly created');
+      const content = range.extractContents();
+      const element = document.createElement('strong');
+
+      element.appendChild(content);
+      range.insertNode(element);
+    }
   };
 
+  // #Keeping this for future reference
   // const onCommandFire = (command) => {
   //   if (command === 'createLink') {
   //     let selection = document.getSelection();
@@ -61,6 +101,7 @@ export const Underline = () => {
   //   // document.execCommand(`${command}`, false, `${cmdValue}` || '');
   // };
 
+  // #Keeping this for future reference
   const onCommandFire = (command) => {
     switch (command) {
       case 'createLink':

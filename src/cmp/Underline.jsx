@@ -41,10 +41,10 @@ export const Underline = () => {
     range = document.createRange();
     range.setStart(textNode, 0);
     range.setEnd(textNode, textNode.length);
-    return selectedText.addRange(range);
+    selectedText.addRange(range);
   };
 
-  // This function will create new tag element and insert it in the node.
+  // This function will create new element and insert it in the node.
   const createNewElement = (range, tag) => {
     const content = range.extractContents();
     const element = document.createElement(tag);
@@ -59,29 +59,28 @@ export const Underline = () => {
 
     let range = selectedText.getRangeAt(0); //Setting the range based on the selection.
     const textNode = document.createTextNode(selectedText.toString());
-    const targetElement = document.getElementsByTagName(tag);
 
-    // Here we are checking if the tag exist in the document.
+    const targetTag = document.getElementsByTagName(tag);
+
+    // Checking if the tag exist in the document.
+    // Checking if the nodeType exist in the selection.
     // If not, we know that we need to create new one.
-    // bugs to fix: {
-    //  1. When an element already with a tag (example: <strong>sdfsdf</strong>),
-    //     you can't select another text to add a tag, problem with range.
-    //  2. When selecting a word or a text as part of a sentence, the other text get croped.
-    // }
-    if (targetElement.length > 0) {
-      for (let i = 0; i < targetElement.length; i++) {
-        console.log(targetElement[i]);
+
+    if (targetTag.length > 0) {
+      for (let i = 0; i < targetTag.length; i++) {
         if (
           selectedText.containsNode(
             document.getElementsByTagName(tag).item(i),
             true
           )
         ) {
-          document.getElementsByTagName(tag)[i].replaceWith(textNode);
+          document.getElementsByTagName(tag)[i].after(textNode);
+          range.extractContents();
+        } else {
+          createNewElement(range, tag); //fix - does not create a new element.
         }
       }
       setRangeSelection(selectedText, range, textNode);
-      return;
     } else {
       createNewElement(range, tag);
     }
@@ -105,8 +104,7 @@ export const Underline = () => {
           </button>
           <button
             className='icon-controller'
-            // onClick={() => onCommandFire('underline')}
-          >
+            onClick={() => setElementTag('u')}>
             <FontAwesomeIcon icon={faUnderline} className='icon-controller' />
           </button>
           <button

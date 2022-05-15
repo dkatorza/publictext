@@ -1,4 +1,4 @@
-# WYSIWYG RICH TEXT EDITOR
+# WYSIWYG RICH TEXT EDITOR - in progress...
 
 Experimenting and going deeper with WEB API.
 Building a Rich text editor without external libraries.
